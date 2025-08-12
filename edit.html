@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>本の編集</title>
+  <style>
+    body {
+      font-family: 'Yu Gothic', 'Arial', sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff8f0;
+      color: #5a3e1b;
+    }
+    h1 {
+      text-align: center;
+      color: #a85f2a;
+      margin-bottom: 30px;
+    }
+    form.edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: #fff3e6;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(168, 95, 42, 0.25);
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      padding: 8px 12px;
+      border: 1px solid #d7bfa5;
+      border-radius: 5px;
+      color: #5a3e1b;
+    }
+    input[type="number"],
+    input[name="状態"] {
+      width: 150px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    .image-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .image-preview-container img {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 5px;
+      object-fit: cover;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    .upload-label {
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    .upload-label input {
+      margin-top: 6px;
+    }
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .form-actions button {
+      background-color: #a85f2a;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .form-actions a {
+      margin-left: 20px;
+      color: #a85f2a;
+      font-weight: 600;
+      text-decoration: none;
+      line-height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>本の編集</h1>
+
+  <form method="POST" action="{{ url_for('edit', id=book.id) }}" enctype="multipart/form-data" class="edit-form">
+
+    <label>
+      タイトル
+      <input type="text" name="タイトル" value="{{ book.タイトル }}" required />
+    </label>
+
+    <label>
+      著者
+      <input type="text" name="著者" value="{{ book.著者 }}" required />
+    </label>
+
+    <label>
+      出版年
+      <input type="number" name="出版年" value="{{ book.出版年 }}" required />
+    </label>
+
+    <label>
+      ジャンル
+      <input type="text" name="ジャンル" value="{{ book.ジャンル }}" required />
+    </label>
+
+    <label>
+      状態
+      <input type="text" name="状態" value="{{ book.状態 }}" required />
+    </label>
+
+    <label>
+      概要
+      <textarea name="概要" rows="4">{{ book.概要 }}</textarea>
+    </label>
+
+    <div>
+      <p style="font-weight: 600;">登録済み画像</p>
+      <div class="image-preview-container">
+        {% if book.images %}
+          {% for img in book.images %}
+            <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="画像" />
+          {% endfor %}
+        {% else %}
+          <p>画像は登録されていません。</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <label class="upload-label">
+      画像を追加アップロード
+      <input type="file" name="images" multiple accept="image/*" />
+    </label>
+
+    <div class="form-actions">
+      <button type="submit">更新</button>
+      <a href="{{ url_for('index') }}">キャンセル</a>
+    </div>
+
+  </form>
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>書籍管理システム</title>
+  <style>
+    body {
+      font-family: 'Yu Gothic', 'Arial', sans-serif;
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff8f0;
+      color: #5a3e1b;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #a85f2a;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    form.search-form {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    input[type="search"] {
+      padding: 8px 12px;
+      width: 300px;
+      border: 1px solid #d7bfa5;
+      border-radius: 5px;
+      color: #5a3e1b;
+    }
+
+    button[type="submit"] {
+      background-color: #a85f2a;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 18px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff3e6;
+      box-shadow: 0 0 8px rgba(168, 95, 42, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #d7bfa5;
+    }
+
+    thead tr {
+      background-color: #a85f2a;
+      color: #fff;
+    }
+
+    thead th {
+      text-align: center;
+    }
+
+    th {
+      padding: 12px 8px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    td {
+      padding: 10px 8px;
+      vertical-align: top;
+      white-space: pre-wrap;
+      border-bottom: 1px solid #e0cfa6;
+    }
+
+    th, td {
+      border: 1px solid #d7bfa5;
+      padding: 10px 8px;
+      vertical-align: top;
+      white-space: pre-wrap;
+    }
+
+    td:nth-child(7) {
+      max-width: 300px;
+      word-break: break-word;
+    }
+
+    td.actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .actions a {
+      padding: 6px 12px;
+      background-color: #fff;
+      border: 1px solid #a85f2a;
+      border-radius: 4px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #a85f2a;
+    }
+
+    .actions a:last-child {
+      border-color: #d1492f;
+      color: #d1492f;
+    }
+
+    img,
+    .no-image {
+      display: inline-block;
+      width: 120px;
+      height: 120px;
+      line-height: 120px;
+      text-align: center;
+      background-color: #f5e8d8;
+      color: #a85f2a;
+      border-radius: 4px;
+      font-weight: bold;
+      object-fit: cover;
+      vertical-align: top;
+    }
+
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .pagination a {
+      margin: 0 6px;
+      color: #a85f2a;
+      text-decoration: none;
+    }
+
+    .pagination span {
+      margin: 0 6px;
+      font-weight: bold;
+      color: #d1492f;
+    }
+
+    form.register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fff3e6;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(168, 95, 42, 0.15);
+    }
+
+    form.register-form input,
+    form.register-form textarea {
+      padding: 8px 12px;
+      border: 1px solid #d7bfa5;
+      border-radius: 4px;
+      color: #5a3e1b;
+    }
+
+    form.register-form input[type="number"],
+    form.register-form input[name="状態"] {
+      width: 120px;
+    }
+
+    form.register-form button {
+      background-color: #a85f2a;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .sort-link {
+      margin: 0 10px;
+      color: #a85f2a;
+      text-decoration: none;
+    }
+
+    .sort-link.active {
+      font-weight: bold;
+      color: #d1492f;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>登録した本の一覧</h1>
+
+  <form method="GET" action="/" class="search-form">
+    <input type="search" name="q" placeholder="検索ワードを入力" value="{{ keyword | default('') }}" />
+    <button type="submit">検索</button>
+  </form>
+
+  <table>
+    <div style="text-align: center; margin-bottom: 20px;">
+      並び替え:
+      <a href="{{ url_for('index', q=keyword, sort='タイトル', order='asc', page=1) }}" class="sort-link {% if sort_col == 'タイトル' %}active{% endif %}">タイトル順</a>
+      <a href="{{ url_for('index', q=keyword, sort='著者', order='asc', page=1) }}" class="sort-link {% if sort_col == '著者' %}active{% endif %}">著者順</a>
+      <a href="{{ url_for('index', q=keyword, sort='出版年', order='asc', page=1) }}" class="sort-link {% if sort_col == '出版年' %}active{% endif %}">出版年順</a>
+      <a href="{{ url_for('index', q=keyword, sort='ジャンル', order='asc', page=1) }}" class="sort-link {% if sort_col == 'ジャンル' %}active{% endif %}">ジャンル順</a>
+    </div>
+
+    <thead>
+      <tr style="background-color: #a85f2a; color: white;">
+        <th>id</th>
+        <th>タイトル</th>
+        <th>著者</th>
+        <th>出版年</th>
+        <th>ジャンル</th>
+        <th>状態</th>
+        <th>概要</th>
+        <th>画像</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in d %}
+        <tr>
+          {% for col in c %}
+            <td>{{ book[col] }}</td>
+          {% endfor %}
+          <td>
+            {% if book.images %}
+              {% for img in book.images %}
+                <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="画像" />
+              {% endfor %}
+            {% else %}
+              <span class="no-image">なし</span>
+            {% endif %}
+          </td>
+          <td class="actions">
+            <a href="{{ url_for('edit', id=book.id) }}">編集</a>
+            <a href="{{ url_for('delete') }}?id={{ book.id }}" onclick="return confirm('削除してもよろしいですか？');">削除</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if pagination.pages > 1 %}
+    <div class="pagination">
+      {% if pagination.page > 1 %}
+        <a href="{{ url_for('index', q=keyword, sort=sort_col, order=order, page=pagination.page - 1) }}">前へ</a>
+      {% endif %}
+      {% for p in range(1, pagination.pages + 1) %}
+        {% if p == pagination.page %}
+          <span>{{ p }}</span>
+        {% else %}
+          <a href="{{ url_for('index', q=keyword, sort=sort_col, order=order, page=p) }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if pagination.page < pagination.pages %}
+        <a href="{{ url_for('index', q=keyword, sort=sort_col, order=order, page=pagination.page + 1) }}">次へ</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <h2 style="margin-top: 50px;">新しい本の登録</h2>
+  <form method="POST" action="/" enctype="multipart/form-data" class="register-form">
+    <input type="text" name="タイトル" placeholder="タイトル" required />
+    <input type="text" name="著者" placeholder="著者" required />
+    <input type="number" name="出版年" placeholder="出版年" required />
+    <input type="text" name="ジャンル" placeholder="ジャンル" required />
+    <input type="text" name="状態" placeholder="状態" required />
+    <textarea name="概要" placeholder="概要" rows="3"></textarea>
+    <input type="file" name="images" multiple accept="image/*" />
+    <button type="submit">登録</button>
+  </form>
+
+</body>
+</html>
